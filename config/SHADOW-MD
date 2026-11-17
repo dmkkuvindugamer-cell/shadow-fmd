@@ -1,0 +1,120 @@
+
+# ==================================
+#       SHADOW FMX CONFIG
+#       HACKER GREEN EDITION
+# ==================================
+
+BOT_NAME = "☠ SHADOW BOT"
+OWNER_NAME = "SHADOW OWNER"
+
+PREFIX = "."
+
+VERSION = "1.0.0"
+LANGUAGE = "Sinhala / English"
+
+# HACKER GREEN THEME
+THEME = {
+    "name": "Hacker Green",
+    "background": "#050805",
+    "primary": "#16A34A",
+    "secondary": "#22C55E",
+    "accent": "#86EFAC",
+    "text": "#FFFFFF",
+    "success": "#00FF66",
+    "error": "#FF3333",
+    "warning": "#FACC15"
+}
+
+# BOT STATUS
+BOT_STATUS = "ONLINE"
+AUTO_REPLY = True
+WELCOME_MESSAGE = True
+AI_CHAT = True
+STICKER_COMMAND = True
+GROUP_INFO = True
+
+# MENU DESIGN
+MENU_HEADER = """
+╭━━━━━━━━━━━━━━━━━━━━╮
+┃   ☠ SHADOW BOT ☠
+┃   HACKER GREEN EDITION
+╰━━━━━━━━━━━━━━━━━━━━╯
+"""
+
+MAIN_MENU = f"""
+{MENU_HEADER}
+╭━━━『 MAIN MENU 』
+┃
+┃ ➤ {PREFIX}menu
+┃ ➤ {PREFIX}alive
+┃ ➤ {PREFIX}info
+┃ ➤ {PREFIX}owner
+┃
+┣━━━『 AI FEATURES 』
+┃
+┃ ➤ {PREFIX}ai
+┃ ➤ {PREFIX}chat
+┃
+┣━━━『 MEDIA 』
+┃
+┃ ➤ {PREFIX}sticker
+┃ ➤ {PREFIX}toimg
+┃
+┣━━━『 GROUP 』
+┃
+┃ ➤ {PREFIX}groupinfo
+┃ ➤ {PREFIX}welcome
+┃
+┣━━━『 OWNER 』
+┃
+┃ ➤ {PREFIX}restart
+┃ ➤ {PREFIX}broadcast
+┃ ➤ {PREFIX}setprefix
+┃
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+⚡ POWERED BY SHADOW
+☠ VERSION: {VERSION}
+"""
+
+FOOTER = "© SHADOW BOT | HACKER GREEN"
+
+# TERMINAL COLORS
+GREEN = "\033[92m"
+DARK_GREEN = "\033[32m"
+WHITE = "\033[97m"
+RESET = "\033[0m"
+
+from config import *
+
+def shadow_logo():
+    print(GREEN + r"""
+   ███████╗██╗  ██╗ █████╗ ██████╗
+   ██╔════╝██║  ██║██╔══██╗██╔══██╗
+   ███████╗███████║███████║██║  ██║
+   ╚════██║██╔══██║██╔══██║██║  ██║
+   ███████║██║  ██║██║  ██║██████╔╝
+   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝
+    """ + RESET)
+
+    print(GREEN + "☠ SHADOW BOT STARTING..." + RESET)
+    print(GREEN + "⚡ THEME: HACKER GREEN" + RESET)
+    print(GREEN + "⚡ PREFIX: ." + RESET)
+    print(GREEN + "⚡ STATUS: ONLINE" + RESET)
+Shadow-Bot/
+│
+├── main.py
+├── config.py
+├── theme.py
+│
+├── plugins/
+│   ├── menu.py
+│   ├── ai.py
+│   ├── sticker.py
+│   ├── welcome.py
+│   └── groupinfo.py
+│
+├── database/
+│   └── settings.json
+│
+└── requirements.txt
