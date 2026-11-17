@@ -1,206 +1,458 @@
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys';
+
+import {
+    generateWAMessageFromContent,
+    proto
+} from '@whiskeysockets/baileys';
+
 import { getFakeQuoted } from '../../lib/fakeQuoted.js';
 import { getDeviceMode } from '../../lib/deviceMode.js';
 
 export default {
     name: 'menu',
-    aliases: ['commands', 'list', 'cmds', 'm', 'cmd', 'commandlist', 'allcmds'],
-    description: 'Displays the ᖴᗴᗴ-᙭ᗰᗪツ command menu',
+
+    aliases: [
+        'commands',
+        'list',
+        'cmds',
+        'm',
+        'cmd',
+        'commandlist',
+        'allcmds'
+    ],
+
+    description: 'Displays SHADOW FMX command menu',
+
     run: async (context) => {
-        const { client, m, mode, pict, botname, prefix } = context;
+
+        const {
+            client,
+            m,
+            mode,
+            pict,
+            botname,
+            prefix
+        } = context;
+
         const fq = getFakeQuoted(m);
 
-        await client.sendMessage(m.chat, { react: { text: '🤖', key: m.key } });
+        // LOADING REACTION
+        await client.sendMessage(m.chat, {
+            react: {
+                text: '💚',
+                key: m.key
+            }
+        });
 
+        const BOT_NAME = 'SHADOW FMX';
+        const effectivePrefix = prefix || '.';
+
+        // COMMAND VALIDATION
         const bodyText = m.body || '';
-        const cleanText = bodyText.trimStart().slice(prefix.length).trimStart();
-        const firstWord = cleanText.split(' ')[0].toLowerCase();
+        const cleanText = bodyText
+            .trimStart()
+            .slice(effectivePrefix.length)
+            .trimStart();
 
-        if (cleanText !== '' && !['menu', 'commands', 'list', 'cmds', 'm', 'help', 'cmd', 'commandlist', 'allcmds'].includes(firstWord)) {
-            const commandName = cleanText.split(' ')[0];
+        const firstWord = cleanText
+            .split(/\s+/)[0]
+            .toLowerCase();
+
+        const validMenuCommands = [
+            'menu',
+            'commands',
+            'list',
+            'cmds',
+            'm',
+            'help',
+            'cmd',
+            'commandlist',
+            'allcmds'
+        ];
+
+        if (
+            cleanText !== '' &&
+            !validMenuCommands.includes(firstWord)
+        ) {
+            const commandName = cleanText.split(/\s+/)[0];
+
             return client.sendMessage(m.chat, {
-                text: `╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├━━━≫ Eʀʀᴏʀ ≪━━━\n├ \n├ Yo ${m.pushName}, what's with the\n├ extra bullshit after "${commandName}"?\n├ Just type *${prefix}menu* properly, moron.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`
-            }, { quoted: fq });
+                text: `
+╭━━━━━━━━━━━━━━━━━━━━╮
+┃     ☠ SHADOW FMX ☠
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+⚠ INVALID MENU REQUEST
+
+Hey ${m.pushName || 'User'}!
+
+Unknown menu command:
+${commandName}
+
+Please type:
+${effectivePrefix}menu
+
+💚 HACKER GREEN EDITION
+`
+            }, {
+                quoted: fq
+            });
         }
 
-        const menuText =
-            `╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n` +
-            `├━━━≫ Mᴇɴᴜ ≪━━━\n` +
-            `├ \n` +
-            `Hoi  @${m.sender.split('@')[0].split(':')[0]}\n` +
-            `├ \n` +
-            `├ Bot: ᖴᗴᗴ-᙭ᗰᗪツ\n` +
-            `├ Prefix: ${prefix}\n` +
-            `├ Mode: ${mode}\n` +
-            `├ \n` +
-            `├ Select a category below.\n` +
-            `╰━━━━━━━━━━━━━━━━ᕗ\n` +
-            `> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`;
+        // MAIN MENU TEXT
+        const menuText = `
+╭━━━━━━━━━━━━━━━━━━━━╮
+┃     ☠ SHADOW FMX ☠
+┃   HACKER GREEN EDITION
+╰━━━━━━━━━━━━━━━━━━━━╯
 
+Hey @${m.sender.split('@')[0].split(':')[0]}! 💚
+
+╭━━━『 BOT INFORMATION 』
+┃
+┃ 🤖 Bot : ${BOT_NAME}
+┃ ⚡ Prefix : ${effectivePrefix}
+┃ 💻 Mode : ${mode || 'Public'}
+┃ 🟢 Status : ONLINE
+┃
+╰━━━━━━━━━━━━━━━━━━━━
+
+💚 Select a category below.
+
+☠ POWERED BY SHADOW FMX
+`;
+
+        // MENU CATEGORIES
         const sections = [
+
             {
-                title: '⌜ 𝘾𝙤𝙧𝙚 𝘾𝙤𝙢𝙢𝙖𝙣𝙙𝙨 ⌟',
-                highlight_label: '© 丨几匚',
+                title: '💚 CORE COMMANDS',
+                highlight_label: 'SHADOW FMX',
                 rows: [
-                    { title: '𝐅𝐮𝐥𝐥𝐌𝐞𝐧𝐮', description: 'Display all commands', id: `${prefix}fullmenu` },
-                    { title: '𝐃𝐞𝐯', description: 'Send developer contact', id: `${prefix}dev` },
-                    { title: '𝐑𝐞𝐩𝐨𝐫𝐭', description: 'Report a bug to dev', id: `${prefix}report` },
-                ],
+                    {
+                        title: 'Full Menu',
+                        description: 'Display all commands',
+                        id: `${effectivePrefix}fullmenu`
+                    },
+                    {
+                        title: 'Developer',
+                        description: 'Developer contact',
+                        id: `${effectivePrefix}dev`
+                    },
+                    {
+                        title: 'Report',
+                        description: 'Report a bug',
+                        id: `${effectivePrefix}report`
+                    }
+                ]
             },
+
             {
-                title: '𝙄𝙣𝙛𝙤 𝘽𝙤𝙩',
-                highlight_label: '© 丨几匚',
+                title: '⚡ BOT INFORMATION',
+                highlight_label: 'SYSTEM INFO',
                 rows: [
-                    { title: '𝐏𝐢𝐧𝐠', description: 'Check bot speed', id: `${prefix}ping` },
-                    { title: '𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬', description: 'Show bot settings', id: `${prefix}settings` },
-                    { title: '𝐌𝐨𝐝𝐞', description: 'Toggle bot mode', id: `${prefix}mode` },
-                    { title: '𝐔𝐩𝐭𝐢𝐦𝐞', description: 'Check how long bot has been running', id: `${prefix}uptime` },
-                ],
+                    {
+                        title: 'Ping',
+                        description: 'Check bot speed',
+                        id: `${effectivePrefix}ping`
+                    },
+                    {
+                        title: 'Settings',
+                        description: 'Show bot settings',
+                        id: `${effectivePrefix}settings`
+                    },
+                    {
+                        title: 'Mode',
+                        description: 'Toggle bot mode',
+                        id: `${effectivePrefix}mode`
+                    },
+                    {
+                        title: 'Uptime',
+                        description: 'Check bot running time',
+                        id: `${effectivePrefix}uptime`
+                    }
+                ]
             },
+
             {
-                title: '𝘾𝙖𝙩𝙚𝙜𝙤𝙧𝙮 𝙈𝙚𝙣𝙪𝙨',
-                highlight_label: '© 丨几匚',
+                title: '☠ CATEGORY MENUS',
+                highlight_label: 'HACKER GREEN',
                 rows: [
-                    { title: '𝐆𝐞𝐧𝐞𝐫𝐚𝐥𝐌𝐞𝐧𝐮', description: 'General commands', id: `${prefix}generalmenu` },
-                    { title: '𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬𝐌𝐞𝐧𝐮', description: 'Bot settings commands', id: `${prefix}settingsmenu` },
-                    { title: '𝐎𝐰𝐧𝐞𝐫𝐌𝐞𝐧𝐮', description: 'Owner only commands', id: `${prefix}ownermenu` },
-                    { title: '𝐆𝐫𝐨𝐮𝐩𝐌𝐞𝐧𝐮', description: 'Group management', id: `${prefix}groupmenu` },
-                    { title: '𝐀𝐈𝐌𝐞𝐧𝐮', description: 'AI & chat commands', id: `${prefix}aimenu` },
-                    { title: '𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐌𝐞𝐧𝐮', description: 'Media downloaders', id: `${prefix}downloadmenu` },
-                    { title: '𝐄𝐝𝐢𝐭𝐢𝐧𝐠𝐌𝐞𝐧𝐮', description: 'Media editing tools', id: `${prefix}editingmenu` },
-                    { title: '𝐄𝐟𝐟𝐞𝐜𝐭𝐬𝐌𝐞𝐧𝐮', description: 'Text effect commands', id: `${prefix}effectsmenu` },
-                    { title: '𝐔𝐭𝐢𝐥𝐬𝐌𝐞𝐧𝐮', description: 'Utility commands', id: `${prefix}utilsmenu` },
-                    { title: '𝐏𝐫𝐢𝐯𝐚𝐜𝐲𝐌𝐞𝐧𝐮', description: 'Privacy commands', id: `${prefix}privacymenu` },
-                ],
-            },
+                    {
+                        title: 'General Menu',
+                        description: 'General commands',
+                        id: `${effectivePrefix}generalmenu`
+                    },
+                    {
+                        title: 'Settings Menu',
+                        description: 'Bot settings commands',
+                        id: `${effectivePrefix}settingsmenu`
+                    },
+                    {
+                        title: 'Owner Menu',
+                        description: 'Owner commands',
+                        id: `${effectivePrefix}ownermenu`
+                    },
+                    {
+                        title: 'Group Menu',
+                        description: 'Group management',
+                        id: `${effectivePrefix}groupmenu`
+                    },
+                    {
+                        title: 'AI Menu',
+                        description: 'AI and chat commands',
+                        id: `${effectivePrefix}aimenu`
+                    },
+                    {
+                        title: 'Download Menu',
+                        description: 'Media commands',
+                        id: `${effectivePrefix}downloadmenu`
+                    },
+                    {
+                        title: 'Editing Menu',
+                        description: 'Media editing tools',
+                        id: `${effectivePrefix}editingmenu`
+                    },
+                    {
+                        title: 'Effects Menu',
+                        description: 'Text effect commands',
+                        id: `${effectivePrefix}effectsmenu`
+                    },
+                    {
+                        title: 'Utils Menu',
+                        description: 'Utility commands',
+                        id: `${effectivePrefix}utilsmenu`
+                    },
+                    {
+                        title: 'Privacy Menu',
+                        description: 'Privacy commands',
+                        id: `${effectivePrefix}privacymenu`
+                    }
+                ]
+            }
         ];
 
         const device = await getDeviceMode();
 
+        // IOS FALLBACK
         if (device === 'ios') {
+
             await client.sendMessage(m.chat, {
-                text: menuText, mentions: [m.sender]
-            }, { quoted: fq });
+                text: menuText,
+                mentions: [m.sender]
+            }, {
+                quoted: fq
+            });
+
             try {
                 await client.sendMessage(m.chat, {
                     listMessage: {
-                        title: '𝐕𝐈𝐄𝐖 𝐎𝐏𝐓𝐈𝐎𝐍𝐒',
-                        description: 'Select a category to view its commands.',
+                        title: 'SHADOW FMX MENU',
+                        description: 'Select a category.',
                         buttonText: 'Browse Commands',
                         listType: 1,
-                        sections: sections.map(s => ({
-                            title: s.title,
-                            rows: s.rows.map(r => ({ title: r.title, description: r.description, rowId: r.id }))
+                        sections: sections.map(section => ({
+                            title: section.title,
+                            rows: section.rows.map(row => ({
+                                title: row.title,
+                                description: row.description,
+                                rowId: row.id
+                            }))
                         })),
-                        footer: '',
-                    },
-                }, { quoted: fq });
-            } catch {}
+                        footer: 'POWERED BY SHADOW FMX'
+                    }
+                }, {
+                    quoted: fq
+                });
+            } catch (error) {
+                console.error('iOS menu fallback:', error);
+            }
+
             return;
         }
 
+        // INTERACTIVE MENU
         try {
-            const msg = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                interactiveMessage: {
-                    body: { text: menuText },
-                    footer: { text: '' },
-                    header: { hasMediaAttachment: false },
-                    contextInfo: {
-                        mentionedJid: [m.sender],
-                        externalAdReply: {
-                            title: `${botname}`,
-                            body: `Yo, ${m.pushName}! Ready to fuck shit up?`,
-                            mediaType: 1,
-                            thumbnail: pict,
-                            mediaUrl: '',
-                            sourceUrl: 'https://github.com/Fred1e/Fee-XMD',
-                            showAdAttribution: false,
-                            renderLargerThumbnail: true,
-                        }
-                    },
-                    nativeFlowMessage: {
-                        messageVersion: 1,
-                        buttons: [
-                            {
-                                name: 'cta_url',
-                                buttonParamsJson: JSON.stringify({
-                                    display_text: 'GitHub Repo',
-                                    url: 'https://github.com/Fred1e/Fee-XMD',
-                                    merchant_url: 'https://github.com/Fred1e/Fee-XMD'
-                                })
-                            },
-                            {
-                                name: 'single_select',
-                                buttonParamsJson: JSON.stringify({
-                                    title: 'Browse Commands',
-                                    sections: sections
-                                })
+
+            const msg = generateWAMessageFromContent(
+                m.chat,
+
+                proto.Message.fromObject({
+                    interactiveMessage: {
+
+                        body: {
+                            text: menuText
+                        },
+
+                        footer: {
+                            text: '☠ POWERED BY SHADOW FMX'
+                        },
+
+                        header: {
+                            hasMediaAttachment: false
+                        },
+
+                        contextInfo: {
+                            mentionedJid: [m.sender],
+
+                            externalAdReply: {
+                                title: BOT_NAME,
+                                body: 'HACKER GREEN EDITION 💚',
+                                mediaType: 1,
+                                thumbnail: pict,
+                                mediaUrl: '',
+                                sourceUrl: 'https://github.com/',
+                                showAdAttribution: false,
+                                renderLargerThumbnail: true
                             }
-                        ]
+                        },
+
+                        nativeFlowMessage: {
+
+                            messageVersion: 1,
+
+                            buttons: [
+
+                                {
+                                    name: 'cta_url',
+
+                                    buttonParamsJson:
+                                        JSON.stringify({
+                                            display_text: 'GitHub',
+                                            url: 'https://github.com/',
+                                            merchant_url: 'https://github.com/'
+                                        })
+                                },
+
+                                {
+                                    name: 'single_select',
+
+                                    buttonParamsJson:
+                                        JSON.stringify({
+                                            title: '💚 Browse Commands',
+                                            sections
+                                        })
+                                }
+                            ]
+                        }
                     }
+                }),
+
+                {
+                    userJid: client.user.id
                 }
-            }), { userJid: client.user.id });
-            if (!msg?.key?.id) throw new Error('null key');
-            await client.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
-        } catch {
+            );
+
+            if (!msg?.key?.id) {
+                throw new Error('Message generation failed');
+            }
+
+            await client.relayMessage(
+                m.chat,
+                msg.message,
+                {
+                    messageId: msg.key.id
+                }
+            );
+
+        } catch (error) {
+
+            console.error('Interactive menu error:', error);
+
+            // TEXT MENU FALLBACK
             await client.sendMessage(m.chat, {
-                image: pict,
-                caption: menuText,
-                mentions: [m.sender],
-                contextInfo: {
-                    externalAdReply: {
-                        title: `${botname}`,
-                        body: `Yo, ${m.pushName}! Ready to fuck shit up?`,
-                        mediaType: 1,
-                        thumbnail: pict,
-                        mediaUrl: '',
-                        sourceUrl: 'https://github.com/Fred1e/Fee-XMD',
-                        showAdAttribution: false,
-                        renderLargerThumbnail: true,
+                text: menuText,
+                mentions: [m.sender]
+            }, {
+                quoted: fq
+            });
+
+            try {
+                await client.sendMessage(m.chat, {
+                    listMessage: {
+                        title: 'SHADOW FMX MENU',
+                        description: 'Select a category.',
+                        buttonText: 'Browse Commands',
+                        listType: 1,
+                        sections: sections.map(section => ({
+                            title: section.title,
+                            rows: section.rows.map(row => ({
+                                title: row.title,
+                                description: row.description,
+                                rowId: row.id
+                            }))
+                        })),
+                        footer: 'POWERED BY SHADOW FMX'
                     }
-                }
-            }, { quoted: fq });
-            await client.sendMessage(m.chat, {
-                listMessage: {
-                    title: '𝐕𝐈𝐄𝐖 𝐎𝐏𝐓𝐈𝐎𝐍𝐒',
-                    description: 'Select a category to view its commands.',
-                    buttonText: 'Browse Commands',
-                    listType: 1,
-                    sections: sections.map(s => ({
-                        title: s.title,
-                        rows: s.rows.map(r => ({ title: r.title, description: r.description, rowId: r.id }))
-                    })),
-                    footer: '',
-                },
-            }, { quoted: fq });
+                }, {
+                    quoted: fq
+                });
+            } catch (fallbackError) {
+                console.error('List fallback error:', fallbackError);
+            }
         }
 
-        const frediPaths = [
-            path.join(__dirname, 'fredi_med'),
-            path.join(process.cwd(), 'fredi_med'),
-            path.join(__dirname, '..', 'fredi_med')
+        // SHADOW AUDIO
+        const audioPaths = [
+            path.join(__dirname, 'shadow_med'),
+            path.join(process.cwd(), 'shadow_med'),
+            path.join(__dirname, '..', 'shadow_med')
         ];
+
         let audioFolder = null;
-        for (const folderPath of frediPaths) {
-            if (fs.existsSync(folderPath)) { audioFolder = folderPath; break; }
+
+        for (const folderPath of audioPaths) {
+            if (fs.existsSync(folderPath)) {
+                audioFolder = folderPath;
+                break;
+            }
         }
+
         if (!audioFolder) return;
-        const menuFiles = ['menu1.mp3', 'menu2.mp3', 'menu3.mp3', 'menu4.mp3'];
-        const possibleFiles = menuFiles.map(f => path.join(audioFolder, f)).filter(f => fs.existsSync(f));
+
+        const menuFiles = [
+            'menu1.mp3',
+            'menu2.mp3',
+            'menu3.mp3',
+            'menu4.mp3'
+        ];
+
+        const possibleFiles = menuFiles
+            .map(file => path.join(audioFolder, file))
+            .filter(file => fs.existsSync(file));
+
         if (possibleFiles.length === 0) return;
-        const randomFile = possibleFiles[Math.floor(Math.random() * possibleFiles.length)];
-        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const randomFile =
+            possibleFiles[
+                Math.floor(Math.random() * possibleFiles.length)
+            ];
+
+        await new Promise(resolve =>
+            setTimeout(resolve, 500)
+        );
+
         try {
             const audioBuffer = fs.readFileSync(randomFile);
-            await client.sendMessage(m.chat, { audio: audioBuffer, ptt: true, mimetype: 'audio/mpeg', fileName: 'fredi-menu.m4a' }, { quoted: fq });
-        } catch {
-            await client.sendMessage(m.chat, { audio: { url: randomFile }, ptt: true, mimetype: 'audio/mpeg', fileName: 'fredi-menu.m4a' }, { quoted: fq });
+
+            await client.sendMessage(m.chat, {
+                audio: audioBuffer,
+                ptt: true,
+                mimetype: 'audio/mpeg',
+                fileName: 'shadow-menu.mp3'
+            }, {
+                quoted: fq
+            });
+
+        } catch (error) {
+            console.error('Shadow audio error:', error);
         }
-    },
+    }
 };
