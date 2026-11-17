@@ -1,7 +1,8 @@
+
 {
-  "name": "Fee-xmd",
+  "name": "shadow-fmx",
   "version": "7.0.0",
-  "description": "A lightning-fast WhatsApp bot with multi-device support, built on Node.js & Baileys.",
+  "description": "SHADOW FMX - A fast WhatsApp bot with multi-device support, built on Node.js and Baileys.",
   "main": "index.js",
   "type": "module",
   "scripts": {
