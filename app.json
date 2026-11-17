@@ -1,6 +1,7 @@
+
 {
-  "name": "FEE-XTREME-MULT-DEVICE",
-  "description": "⚡ A lightning-fast WhatsApp bot with multi-device support, built on Node.js & Baileys.",
+  "name": "SHADOW-FMD",
+  "description": "🟢 SHADOW FMD - A powerful WhatsApp multi-device bot built with Node.js and Baileys.",
   "website": "https://github.com/Fred1e/Fee-xmd#readme",
   "repository": "https://github.com/Fred1e/Fee-xmd.git",
   "logo": "https://qu.ax/XxQwp.jpg",
@@ -10,10 +11,11 @@
     "baileys",
     "nodejs",
     "heroku",
-    "fee-xmd"
+    "shadow-fmd",
+    "hacker-green"
   ],
   "scripts": {
-    "postdeploy": "echo '🚀 Fee-Xmd has been successfully deployed!'"
+    "postdeploy": "echo '🟢 SHADOW FMD has been successfully deployed!'"
   },
   "build": {
     "languages": [
@@ -22,20 +24,20 @@
   },
   "env": {
     "SESSION": {
-      "description": "🔑 Required – Your WhatsApp session ID (generated after linking the bot).",
+      "description": "🔑 Required - Your WhatsApp session ID.",
       "required": true
     },
     "DEVICE": {
-      "description": "Device mode: android (default) or ios. Android uses interactive select buttons; iOS uses text-only responses. Accepted values: android, ios, default.",
+      "description": "Device mode: android (default) or ios. Accepted values: android, ios, default.",
       "required": false,
       "value": "default"
     },
     "HEROKU_APP_NAME": {
-      "description": "Optional – The Heroku app name (needed for updating the bot).",
+      "description": "Optional - Heroku app name (needed for updating the bot).",
       "required": false
     },
     "HEROKU_API_KEY": {
-      "description": "Optional – Your Heroku API key (only needed for updating the bot).",
+      "description": "Optional - Heroku API key (only needed for updating the bot).",
       "required": false
     }
   },
