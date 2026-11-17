@@ -27,7 +27,7 @@ export default async (client, m) => {
             const mins = Math.floor((Date.now() - time) / 60000);
             try {
                 await client.sendMessage(m.chat, {
-                    text: `╭━━━ᕙ    FEE-XMD    ᕗ━━━\n├━━━≫ AFK ALERT ≪━━━\n├ @${num} is currently ghosting everyone.\n├ Reason: ${reason || 'none given 💀'}\n├ Since: ${mins} min${mins !== 1 ? 's' : ''} ago\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`,
+                    text: `╭━━━ᕙ    SHADOW-FMD    ᕗ━━━\n├━━━≫ AFK ALERT ≪━━━\n├ @${num} is currently ghosting everyone.\n├ Reason: ${reason || 'none given 💀'}\n├ Since: ${mins} min${mins !== 1 ? 's' : ''} ago\n╰━━━━━━━━━━━━━━━━ᕗ\n> ©𝖕𝖔𝖜𝖊𝖗𝖊𝖉 𝖇𝖞 𝖋𝖗𝖊𝖉𝖎_𝖊𝖟𝖗𝖆`,
                     mentions: [jid, m.sender]
                 });
             } catch {}
