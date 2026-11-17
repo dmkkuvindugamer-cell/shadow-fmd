@@ -1,4 +1,3 @@
-
 export const botname = 'SHADOW FMD';
 export const ownername = 'SHADOW FMD OWNER';
 
